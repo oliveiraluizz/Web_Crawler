@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Web_Crawler" />
         <module name="OVER_MIND_TEST" />
       </profile>
     </annotationProcessing>

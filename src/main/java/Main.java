@@ -17,13 +17,17 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         System.out.println("Tentando conectar ao site...");
+        //Comando que conecta ao site que deseja verificar.
         Document doc = Jsoup.connect(url).get();
         System.out.println("Conectado ao site.");
         System.out.println("Encontrando Elementos...");
+
+        //Trecho de codigo que conecta aos elementos da primeira pagina, para pegar o elemento nota, que era o mais facil.
         Element table = doc.getElementsByClass("chart full-width").first();
         Element tbody = table.getElementsByTag("tbody").first();
         List<Element> elements = tbody.getElementsByTag("tr");
         List<Filme> filmes = new ArrayList<Filme>();
+        //ForEach que percorre os elementos e pega o path(Complemento de link para entrar em outras paginas) e a nota.
         elements.forEach(e -> {
             List<Element> attributes = e.getElementsByTag("td");
             Element filmNameElement = attributes.get(1);
@@ -37,8 +41,11 @@ public class Main {
         System.out.println("Elementos encontrados.");
         System.out.println("Aguarde alguns instantes...");
         System.out.println("--------------------------------------------------------------");
+
+        //Lista que pega as notas apenas dos 10 filmes desejados.
         List<Filme> filmesFiltrados = filmes.stream().sorted(Comparator.comparing(e-> e.getNota())).limit(10).collect(Collectors.toList());
-            filmesFiltrados.forEach(e->{
+        //Chamada dos metodos com paramentros path.
+        filmesFiltrados.forEach(e->{
                 try {
                     extractOriginalName(e.getMoreInfoPath(),e);
                 } catch (IOException ex) {
@@ -65,31 +72,29 @@ public class Main {
     }
     private static void montarResultado(List<Filme> filmesFiltrados) {
 
-
+        //Esse metodo é apenas um void para organizar os resultados que serão mostrados no console.
                 for (int i = filmesFiltrados.size() - 1; i >= 0; i--) {
                     System.out.println("Nome Original: " + filmesFiltrados.get(i).getNomesOriginais().get(filmesFiltrados.get(i).getNomesOriginais().size()-1).toString().substring(16));
-                    filmesFiltrados.get(i).getNomesOriginais().stream()
-                            .limit(filmesFiltrados.get(i).getNomesOriginais().size()-1)
-                            .map(s -> s + ", ")
-                            .forEach(System.out::print);
+                    filmesFiltrados.get(i).getNomesOriginais().stream().limit(filmesFiltrados.get(i).getNomesOriginais().size()-1).map(s -> s + ", ").forEach(System.out::print);
+
                     System.out.println("Nota: " + filmesFiltrados.get(i).getNota());
+
                     System.out.println("Diretores: " + filmesFiltrados.get(i).getDiretores().get(filmesFiltrados.get(i).getDiretores().size()-1));
-                    filmesFiltrados.get(i).getDiretores().stream()
-                            .limit(filmesFiltrados.get(i).getDiretores().size()-1)
-                            .map(s -> s + ", ")
-                            .forEach(System.out::print);
+                    filmesFiltrados.get(i).getDiretores().stream().limit(filmesFiltrados.get(i).getDiretores().size()-1).map(s -> s + ", ").forEach(System.out::print);
+
                     System.out.println("\nAtores: " +  filmesFiltrados.get(i).getAtores().get(filmesFiltrados.get(i).getAtores().size()-1));
-                    filmesFiltrados.get(i).getAtores().stream()
-                            .limit(filmesFiltrados.get(i).getAtores().size()-1)
-                            .map(s -> s + ", ")
-                            .forEach(System.out::print);
-                    System.out.println("\nNotas dos comentarios: " + filmesFiltrados.get(i).getNotasComentarios().stream()
-                            .limit(filmesFiltrados.get(i).getNotasComentarios().size()-1)
-                            .filter(comentario->comentario.equals("10/10")).findFirst());
+                    filmesFiltrados.get(i).getAtores().stream().limit(filmesFiltrados.get(i).getAtores().size()-1).map(s -> s + ", ").forEach(System.out::print);
+
+                    System.out.println("\nNotas dos comentarios: " + filmesFiltrados.get(i).getNotasComentarios().stream().limit(filmesFiltrados.get(i).getNotasComentarios().size()-1).filter(comentario->comentario.equals("10/10")).findFirst());
+
                     System.out.println("Comentarios: " + filmesFiltrados.get(i).getNotasComentarios().get(0).toString());
+
                     System.out.println("--------------------------------------------------------------");
             }
     }
+
+    //Os metodos Extract a seguir, vão simplismente entrar nas paginas das request e extrair os dados principaisdo filme
+    //como Nome em ingles, equipe de direção
     public static void extractOriginalName(String path, Filme filme) throws IOException {
         Document doc = Jsoup.connect("https://www.imdb.com/"+ path).get();
         List<Element> elements = new ArrayList<Element>();

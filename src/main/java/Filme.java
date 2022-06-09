@@ -155,7 +155,7 @@ public class Filme {
 
             System.out.println("\nNotas dos comentarios: " + filmesFiltrados.get(i).getNotasComentarios().stream().limit(filmesFiltrados.get(i).getNotasComentarios().size()-1).filter(comentario->comentario.equals("10/10")).findFirst());
 
-            System.out.println("Comentarios: " + filmesFiltrados.get(i).getNotasComentarios().get(0).toString());
+            System.out.println("Comentarios: " + filmesFiltrados.get(i).getComentarios().get(0).toString());
 
             System.out.println("--------------------------------------------------------------");
         }

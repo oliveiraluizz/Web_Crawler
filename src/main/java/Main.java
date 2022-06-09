@@ -92,7 +92,6 @@ public class Main {
                     System.out.println("--------------------------------------------------------------");
             }
     }
-
     //Os metodos Extract a seguir, vão simplismente entrar nas paginas das request e extrair os dados principaisdo filme
     //como Nome em ingles, equipe de direção
     public static void extractOriginalName(String path, Filme filme) throws IOException {

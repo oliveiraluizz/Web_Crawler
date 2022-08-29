@@ -11,7 +11,7 @@ public class Main {
 
     public Main() throws IOException {
     }
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         Filme filme = new Filme();
 

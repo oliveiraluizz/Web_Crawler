@@ -82,13 +82,12 @@ public class Filme {
         this.nomesOriginais = nomeOriginal;
     }
 
-    public void findElements() throws IOException {
+    public void findElements() throws IOException, InterruptedException {
 
         System.out.println("Tentando conectar ao site...");
         //Comando que conecta ao site que deseja verificar.
         Document doc = Jsoup.connect(url).get();
         System.out.println("Conectado ao site.");
-        System.out.println("Encontrando Elementos...");
 
         //Trecho de codigo que conecta aos elementos da primeira pagina, para pegar o elemento nota, que era o mais facil.
         Element table = doc.getElementsByClass("chart full-width").first();
@@ -106,16 +105,18 @@ public class Filme {
             filme.setNota(nota);
             filmes.add(filme);
         });
-        System.out.println("Elementos encontrados.");
-        System.out.println("Aguarde alguns instantes...");
-        System.out.println("--------------------------------------------------------------");
 
         //Lista que pega as notas apenas dos 10 filmes desejados.
         List<Filme> filmesFiltrados = filmes.stream().sorted(Comparator.comparing(e-> e.getNota())).limit(10).collect(Collectors.toList());
         //Chamada dos metodos com paramentros path.
+        Thread.sleep(2000);
+        System.out.println("Encontrando Elementos...");
+        Thread.sleep(2000);
+        System.out.println("Aguarde alguns instantes...");
         filmesFiltrados.forEach(e->{
             try {
                 extractOriginalName(e.getMoreInfoPath(),e);
+
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -131,14 +132,18 @@ public class Filme {
             }
             try {
                 extractComentarios(e.getMoreInfoPath(),e);
-
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
-        montarResultado(filmesFiltrados);
+        System.out.println("Elementos encontrados.");
+
+        System.out.println("--------------------------------------------------------------");
+
+        result(filmesFiltrados);
     }
-    private static void montarResultado(List<Filme> filmesFiltrados) {
+
+    private static void result(List<Filme> filmesFiltrados) {
 
         //Esse metodo é apenas um void para organizar os resultados que serão mostrados no console.
         for (int i = filmesFiltrados.size() - 1; i >= 0; i--) {
@@ -148,12 +153,12 @@ public class Filme {
             System.out.println("Nota: " + filmesFiltrados.get(i).getNota());
 
             System.out.println("Diretores: " + filmesFiltrados.get(i).getDiretores().get(filmesFiltrados.get(i).getDiretores().size()-1));
-            filmesFiltrados.get(i).getDiretores().stream().limit(filmesFiltrados.get(i).getDiretores().size()-1).map(s -> s + ", ").forEach(System.out::print);
+            filmesFiltrados.get(i).getDiretores().stream().limit(filmesFiltrados.get(i).getDiretores().size()-1).map(s -> s + ", ");
 
             System.out.println("\nAtores: " +  filmesFiltrados.get(i).getAtores().get(filmesFiltrados.get(i).getAtores().size()-1));
             filmesFiltrados.get(i).getAtores().stream().limit(filmesFiltrados.get(i).getAtores().size()-1).map(s -> s + ", ").forEach(System.out::print);
 
-            System.out.println("\nNotas dos comentarios: " + filmesFiltrados.get(i).getNotasComentarios().stream().limit(filmesFiltrados.get(i).getNotasComentarios().size()-1).filter(comentario->comentario.equals("10/10")).findFirst());
+            System.out.println("\nNotas dos comentarios: " + filmesFiltrados.get(i).getNotasComentarios().get(0).toString());
 
             System.out.println("Comentarios: " + filmesFiltrados.get(i).getComentarios().get(0).toString());
 
